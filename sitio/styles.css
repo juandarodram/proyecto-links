@@ -1,0 +1,87 @@
+body {
+
+    
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  color: white;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+}
+
+/* ===== CONTENEDOR ===== */
+.container {
+  width: 100%;
+  max-width: 540px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+/* ===== FOTO Y NOMBRE ===== */
+img {
+  border-radius: 50%;
+}
+
+.name {
+  font-weight: bold;
+}
+
+/* ===== SECCIONES ===== */
+h4 {
+  margin-top: 30px;
+}
+
+/* ===== LINKS ===== */
+.links-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* BOTONES MODERNOS */
+.links-container a {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  text-decoration: none;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.2);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* HOVER */
+.links-container a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+/* ICONOS */
+.links-container i {
+  margin-right: 5px;
+}
+
+/* ===== FOOTER ===== */
+.bottom {
+  margin-top: 30px;
+  font-weight: bold;
+}
+
+.bottom span {
+  color: #0a192f;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (min-width: 768px) {
+  .links-container a {
+    width: 80%;
+  }
+}
