@@ -41,32 +41,29 @@ jobs:
           docker rm test-container
 
       # 5. Deploy a EC2 por SSH
-      - name: Deploy to EC2
+      - name: Deploy to EC2  
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_KEY }}
           script: |
-            echo "📦 Entrando al proyecto en EC2..."
+            set -e
 
-            cd /home/ubuntu/proyecto-links || {
-              echo "Repo no existe, clonando..."
-              git clone https://github.com/juandarodram/proyecto-links.git
-              cd proyecto-links
-            }
+            echo "📦 Entrando al proyecto"
+            cd /home/ubuntu/proyecto-links
 
-            echo "🔄 Actualizando código..."
+            echo "🔄 Actualizando código"
             git pull origin main
 
-            echo "🐳 Construyendo imagen Docker..."
-            docker build -t mi-proyecto-docker .
+            echo "🐳 Build Docker"
+            sudo docker build -t mi-proyecto-docker .
 
-            echo "🛑 Deteniendo contenedor anterior..."
-            docker stop proyecto || true
-            docker rm proyecto || true
+            echo "🛑 Parando contenedor"
+            sudo docker stop proyecto || true
+            sudo docker rm proyecto || true
 
-            echo "🚀 Ejecutando nuevo contenedor..."
-            docker run -d --restart always -p 3000:80 --name proyecto mi-proyecto-docker
+            echo "🚀 Levantando nuevo contenedor"
+            sudo docker run -d --restart always -p 3000:80 --name proyecto mi-proyecto-docker
 
-            echo "✅ Deploy completado"
+            echo "✅ Deploy terminado"
