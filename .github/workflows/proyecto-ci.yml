@@ -1,38 +1,72 @@
-name: Build and Test Docker Image
+name: CI/CD Docker to EC2
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  build:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Clonar repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2. Configurar Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
+      # 3. Build imagen Docker
       - name: Build Docker image
         run: |
           docker build -t mi-proyecto-docker:latest .
 
+      # 4. Test del contenedor
       - name: Test Docker container
         run: |
-          # Corre el contenedor en segundo plano
           docker run -d --name test-container -p 8080:80 mi-proyecto-docker:latest
-          sleep 5  # espera a que arranque
-          # Verifica que la página principal responde con HTTP 200
+          sleep 5
+
           STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:8080)
           echo "HTTP status: $STATUS"
+
           if [ "$STATUS" -ne 200 ]; then
-            echo "Test failed: Index page not reachable"
+            echo "❌ Test failed: app not reachable"
+            docker logs test-container
             exit 1
           fi
-          # Detener y eliminar contenedor de prueba
+
           docker stop test-container
           docker rm test-container
+
+      # 5. Deploy a EC2 por SSH
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            echo "📦 Entrando al proyecto en EC2..."
+
+            cd /home/ubuntu/proyecto-links || {
+              echo "Repo no existe, clonando..."
+              git clone https://github.com/juandarodram/proyecto-links.git
+              cd proyecto-links
+            }
+
+            echo "🔄 Actualizando código..."
+            git pull origin main
+
+            echo "🐳 Construyendo imagen Docker..."
+            docker build -t mi-proyecto-docker .
+
+            echo "🛑 Deteniendo contenedor anterior..."
+            docker stop proyecto || true
+            docker rm proyecto || true
+
+            echo "🚀 Ejecutando nuevo contenedor..."
+            docker run -d --restart always -p 3000:80 --name proyecto mi-proyecto-docker
+
+            echo "✅ Deploy completado"
