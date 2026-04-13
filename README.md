@@ -45,6 +45,9 @@ docker run -d -p 3000:80 --restart always mi-sitio
 🔄 CI/CD
 
 Se implementó un pipeline básico utilizando GitHub Actions para automatizar procesos de integración y despliegue del proyecto.
+El pipeline se ejecuta automáticamente con GitHub Actions en cada push.
+
+👉 Ver ejecución: https://github.com/juandarodram/proyecto-links/actions
 
 🧠 Aprendizajes
 Despliegue de aplicaciones en AWS EC2
