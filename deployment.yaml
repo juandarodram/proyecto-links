@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-sitio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-sitio
+  template:
+    metadata:
+      labels:
+        app: mi-sitio
+    spec:
+      containers:
+      - name: mi-sitio
+        image: mi-sitio:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
